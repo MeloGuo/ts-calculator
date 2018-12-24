@@ -6,11 +6,16 @@
       button.className = className
     }
     container.appendChild(button)
+    return button
   }
 
   let container: HTMLDivElement = document.createElement('div')
   container.classList.add('calculator')
   document.body.appendChild(container)
+
+  let n1: number
+  let n2: number
+  let operator: string
 
   let output: HTMLDivElement = document.createElement('div')
   container.appendChild(output)
@@ -18,6 +23,50 @@
   span.textContent = '0'
   output.appendChild(span)
   output.classList.add('output')
+  container.addEventListener('click', (event) => {
+    if (event.target instanceof HTMLButtonElement) {
+      let button: HTMLButtonElement = event.target
+      let text: string = button.textContent
+      if ('0123456789'.includes(text)) {
+        if (operator) {
+          if (n2) {
+            n2 = parseInt(n2.toString() + text)
+          } else {
+            n2 = parseInt(text)
+          }
+          span.textContent = n2.toString()
+        } else {
+          if (n1) {
+            n1 = parseInt(n1.toString() + text)
+          } else {
+            n1 = parseInt(text)
+          }
+          span.textContent = n1.toString()
+        }
+      } else if ('+-×÷'.includes(text)) {
+        operator = text
+      } else if ('='.includes(text)) {
+        let result: number
+        if (operator === '+') {
+          result = n1 + n2
+        } else if (operator === '-') {
+          result = n1 - n2
+        } else if (operator === '×') {
+          result = n1 * n2
+        } else if (operator === '÷') {
+          result = n1 * n2
+        }
+        span.textContent = result.toString()
+      } else if ('Clear'.includes(text)) {
+        n1 = 0
+        n2 = 0
+        span.textContent = '0'
+      } else {
+        console.log('don\'t know')
+      }
+      console.log(n1, operator, n2)
+    }
+  })
 
   let keys: Array<Array<string>> = [
     ['Clear', '÷'],
