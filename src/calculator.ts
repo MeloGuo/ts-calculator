@@ -3,9 +3,10 @@
     public container: HTMLDivElement
     private output: HTMLDivElement
     private span: HTMLSpanElement
-    public n1: number
-    public n2: number
-    public operator: string
+    public n1: string = null
+    public n2: string = null
+    public operator: string = null
+    public result: number = null
     public keys: Array<Array<string>> = [
       ['Clear', '÷'],
       ['7', '8', '9', '×'],
@@ -59,53 +60,81 @@
       })
     }
 
+    updateNumber(name: string, text: string) {
+      if (this[name]) {
+        this[name] += text
+      } else {
+        this[name] = text
+      }
+      this.span.textContent = this[name].toString()
+    }
+
+    updateNumbers(text: string) {
+      if (this.operator) {
+        this.updateNumber('n2', text)
+      } else {
+        this.updateNumber('n1', text)
+      }
+    }
+
+    updateResult() {
+      let result: number
+      let n1: number = parseFloat(this.n1)
+      let n2: number = parseFloat(this.n2)
+      if (this.operator === '+') {
+        result = n1 + n2
+      } else if (this.operator === '-') {
+        result = n1 - n2
+      } else if (this.operator === '×') {
+        result = n1 * n2
+      } else if (this.operator === '÷') {
+        result = n1 * n2
+      }
+      this.span.textContent = result.toString()
+      this.n1 = null
+      this.n2 = null
+      this.operator = null
+      this.result = result
+    }
+
+    clearData() {
+      this.n1 = null
+      this.n2 = null
+      this.operator = null
+      this.result = null
+      this.span.textContent = '0'
+    }
+
+    updateOperator(text: string) {
+      if (this.n1 === null) {
+        this.n1 = this.result.toString()
+      }
+      this.operator = text
+    }
+
+    updateNumberOrOperator(text: string) {
+      if ('.0123456789'.indexOf(text) > -1) {
+        this.updateNumbers(text)
+      } else if ('+-×÷'.indexOf(text) > -1) {
+        // 更新 operator
+        this.updateOperator(text)
+      } else if ('='.indexOf(text) > -1) {
+        // 计算结果
+        this.updateResult()
+      } else if ('Clear'.indexOf(text) > -1) {
+        // 清空当前数字
+        this.clearData()
+      } else {
+        console.log('don\'t know')
+      }
+    }
+
     bindEvents() {
       this.container.addEventListener('click', (event) => {
         if (event.target instanceof HTMLButtonElement) {
           let button: HTMLButtonElement = event.target
           let text: string = button.textContent
-          if ('0123456789'.includes(text)) {
-            if (this.operator) {
-              // 更新 n2
-              if (this.n2) {
-                this.n2 = parseInt(this.n2.toString() + text)
-              } else {
-                this.n2 = parseInt(text)
-              }
-              this.span.textContent = this.n2.toString()
-            } else {
-              // 更新 n1
-              if (this.n1) {
-                this.n1 = parseInt(this.n1.toString() + text)
-              } else {
-                this.n1 = parseInt(text)
-              }
-              this.span.textContent = this.n1.toString()
-            }
-          } else if ('+-×÷'.includes(text)) {
-            // 更新 operator
-            this.operator = text
-          } else if ('='.includes(text)) {
-            // 计算结果
-            let result: number
-            if (this.operator === '+') {
-              result = this.n1 + this.n2
-            } else if (this.operator === '-') {
-              result = this.n1 - this.n2
-            } else if (this.operator === '×') {
-              result = this.n1 * this.n2
-            } else if (this.operator === '÷') {
-              result = this.n1 * this.n2
-            }
-            this.span.textContent = result.toString()
-          } else if ('Clear'.includes(text)) {
-            // 清空当前数字
-            this.n1 = 0
-            this.n2 = 0
-            this.span.textContent = '0'
-          } else {
-            console.log('don\'t know')
-          }
+          this.updateNumberOrOperator(text)
         }
       })
     }
