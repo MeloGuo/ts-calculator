@@ -1,7 +1,6 @@
 {
   class Calculator {
     public container: HTMLDivElement
-    private output: HTMLDivElement
     private span: HTMLSpanElement
     public n1: string = null
     public n2: string = null
@@ -14,6 +13,7 @@
       ['1', '2', '3', '+'],
       ['0', '.', '=']
     ]
+
     constructor() {
       this.createContainer()
       this.createOutput()
@@ -45,7 +45,6 @@
       span.textContent = '0'
       output.appendChild(span)
       this.container.appendChild(output)
-      this.output = output
       this.span = span
     }
 

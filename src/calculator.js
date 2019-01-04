@@ -39,7 +39,6 @@
             span.textContent = '0';
             output.appendChild(span);
             this.container.appendChild(output);
-            this.output = output;
             this.span = span;
         };
         Calculator.prototype.createButtons = function () {
