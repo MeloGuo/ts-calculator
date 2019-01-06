@@ -85,11 +85,18 @@
             else if (this.operator === '÷') {
                 result = n1 * n2;
             }
-            this.span.textContent = result.toString();
+            result = this.removeZero(result.toPrecision(7));
+            if (n2 === 0) {
+                result = '不是数字';
+            }
+            this.span.textContent = result;
             this.n1 = null;
             this.n2 = null;
             this.operator = null;
             this.result = result;
+        };
+        Calculator.prototype.removeZero = function (string) {
+            return string.replace(/\.?0+$/g, '').replace(/\.0+e/, 'e');
         };
         Calculator.prototype.clearData = function () {
             this.n1 = null;

@@ -77,7 +77,7 @@
     }
 
     updateResult() {
-      let result: number
+      let result: any
       let n1: number = parseFloat(this.n1)
       let n2: number = parseFloat(this.n2)
       if (this.operator === '+') {
@@ -89,11 +89,22 @@
       } else if (this.operator === '÷') {
         result = n1 * n2
       }
-      this.span.textContent = result.toString()
+
+      result = this.removeZero(result.toPrecision(7))
+        
+      if (n2 === 0) {
+        result = '不是数字'
+      }
+      
+      this.span.textContent = result
       this.n1 = null
       this.n2 = null
       this.operator = null
       this.result = result
+    }
+
+    removeZero(string: string): string {
+      return string.replace(/\.?0+$/g, '').replace(/\.0+e/, 'e')
     }
 
     clearData() {
